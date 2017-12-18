@@ -4,6 +4,8 @@ var sessionTools=[document.body, document.body];
 var currentTool;
 var currentToolName;
 var flag=false;
+var width=window.innerWidth;
+var height=window.innerHeight;
 
 MyPaint.start=function(){
     MyPaint.createBasis();
@@ -13,6 +15,8 @@ MyPaint.start=function(){
 
 MyPaint.createBasis=function(){
   //create container for all elements
+  window.addEventListener("resize", MyPaint.relocate);
+
   var containerAll=document.createElement("DIV");
   document.body.appendChild(containerAll);
   containerAll.className="doc-container";
@@ -136,11 +140,11 @@ MyPaint.engageMouseAction=function(e){
 }
 
 MyPaint.change=function(e){
-  console.log("mouse is moving");
+
   if (flag){
      if (currentTool.className=="brushes"){
          color=document.getElementById("color-picker").value;
-         console.log("i am brush");
+
          if (currentToolName=="paint-brush1"){
            var canvas=document.getElementById("container");
            var brushSquare=document.createElement("DIV");
@@ -148,12 +152,12 @@ MyPaint.change=function(e){
            brushSquare.style.height="10px";
            canvas.appendChild(brushSquare);
            brushSquare.style.backgroundColor=color;
-           brushSquare.style.top = e.pageY + "px";
-           brushSquare.style.left = e.pageX + "px";
+           brushSquare.style.top = e.clientY + "px";
+           brushSquare.style.left = e.clientX + "px";
            brushSquare.style.display="inline-block";
            brushSquare.style.position="absolute";
            brushSquare.className="drawing";
-            console.log("i am first if");
+
          } else if (currentToolName=="paint-brush2"){
            var canvas=document.getElementById("container");
            var brushRound=document.createElement("DIV");
@@ -168,12 +172,10 @@ MyPaint.change=function(e){
            brushRound.style.display="inline-block";
            brushRound.style.position="absolute";
            brushRound.className="drawing";
-           console.log("i am second if");
          }
      }
     else if (currentTool.className=="erasers"){
          color="inherit";
-         console.log("i am eraser");
 
          if (currentToolName=="eraser-tool0"){
              var canvas=document.getElementById("container");
@@ -186,8 +188,7 @@ MyPaint.change=function(e){
              brushSquare.style.left = e.pageX + "px";
              brushSquare.style.display="inline-block";
              brushSquare.style.position="absolute";
-             //brushSquare.className="drawing";
-            console.log("i am first if");
+
          } else if (currentToolName=="eraser-tool1"){
              var canvas=document.getElementById("container");
              var brushSquare=document.createElement("DIV");
@@ -199,8 +200,7 @@ MyPaint.change=function(e){
              brushSquare.style.left = e.pageX + "px";
              brushSquare.style.display="inline-block";
              brushSquare.style.position="absolute";
-             //brushSquare.className="drawing";
-             console.log("i am second if");
+
          } else if (currentToolName=="eraser-tool2"){
              var canvas=document.getElementById("container");
              var brushSquare=document.createElement("DIV");
@@ -212,8 +212,6 @@ MyPaint.change=function(e){
              brushSquare.style.left = e.pageX + "px";
              brushSquare.style.display="inline-block";
              brushSquare.style.position="absolute";
-             //brushSquare.className="drawing";
-             console.log("i am third if");
          }
      }
    }
@@ -235,9 +233,7 @@ MyPaint.selectTool=function(e){
     sessionTools[sessionTools.length-2].style.opacity="1";
     sessionTools[sessionTools.length-2].style.boxShadow="none";
     MyPaint.enable();
-    console.log(currentToolName);
-    console.log(currentTool);
-    console.log(currentTool.className);
+
 }
 
 MyPaint.enable=function(){
@@ -268,7 +264,7 @@ MyPaint.createClearButton=function(){
 }
 
 MyPaint.clearCanvas=function(){
-    console.log("clear");
+
     var canvas=document.getElementById("container");
     var pic=document.getElementsByClassName("drawing");
     for (var i=pic.length-1; i>=0; i--){
@@ -276,6 +272,18 @@ MyPaint.clearCanvas=function(){
     }
 }
 
+MyPaint.relocate=function(){
+    var picture=document.getElementsByClassName("drawing");
+    newWidth=window.innerWidth;
+    newHeight=window.innerHeight;
 
+    for (var i=0; i<picture.length; i++){
+      picture[i].style.left=(parseInt(picture[i].style.left)-Math.floor((width-newWidth)/2))+"px"; // this is because the left point of the canvas also moves by the half of the change in the screen size
+      picture[i].style.top=(parseInt(picture[i].style.top)-Math.floor((height-newHeight)/2))+"px";
+    }
+
+    width=newWidth;
+    height=newHeight;
+}
 
 MyPaint.start();
